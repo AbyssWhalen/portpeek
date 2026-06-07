@@ -2,7 +2,6 @@ use crate::model::*;
 use crate::scanner::{PortScanner, ScanError};
 use std::collections::HashMap;
 use std::fs;
-use std::net::IpAddr;
 use std::path::Path;
 
 pub struct LinuxScanner;

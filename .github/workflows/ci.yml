@@ -53,9 +53,5 @@ jobs:
       - name: Check formatting
         run: cargo fmt --all -- --check
 
-      - name: Clippy (verbose)
-        if: always()
-        run: cargo clippy --all-targets --all-features --message-format=json 2>&1 || true
-
       - name: Clippy
         run: cargo clippy --all-targets --all-features -- -D warnings
