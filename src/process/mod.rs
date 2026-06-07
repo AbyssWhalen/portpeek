@@ -72,7 +72,7 @@ pub fn kill_on_port(
     Ok(())
 }
 
-/// Open http://localhost:<port> in the default browser.
+/// Open `http://localhost:<port>` in the default browser.
 pub fn open_port(port: u16) -> Result<(), Box<dyn std::error::Error>> {
     let url = format!("http://localhost:{}", port);
     println!("Opening {} ...", url.cyan());

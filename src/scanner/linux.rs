@@ -108,9 +108,13 @@ fn build_inode_pid_map() -> Result<HashMap<u64, u32>, ScanError> {
             let link_str = link.to_string_lossy();
             // Socket links look like: "socket:[12345]"
             if link_str.starts_with("socket:[") {
-                let inode_str = &link_str[8..link_str.len() - 1];
-                if let Ok(inode) = inode_str.parse::<u64>() {
-                    map.insert(inode, pid);
+                let inode_str = link_str
+                    .strip_prefix("socket:[")
+                    .and_then(|s| s.strip_suffix(']'));
+                if let Some(inode_str) = inode_str {
+                    if let Ok(inode) = inode_str.parse::<u64>() {
+                        map.insert(inode, pid);
+                    }
                 }
             }
         }

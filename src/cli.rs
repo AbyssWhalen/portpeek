@@ -59,7 +59,7 @@ pub enum Command {
         #[arg(long, short)]
         force: bool,
     },
-    /// Open http://localhost:<port> in the default browser
+    /// Open `http://localhost:<port>` in the default browser
     Open {
         /// Target port number
         port: u16,

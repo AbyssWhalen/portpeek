@@ -64,7 +64,7 @@ impl std::fmt::Display for ConnectionState {
 
 impl ConnectionState {
     /// Parse Linux /proc/net/tcp state hex code.
-    /// See: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/net/tcp_states.h
+    /// See: <https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/net/tcp_states.h>
     pub fn from_linux_hex(hex: &str) -> Self {
         match hex.to_uppercase().as_str() {
             "0A" => ConnectionState::Listen,

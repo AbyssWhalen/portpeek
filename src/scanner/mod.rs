@@ -65,8 +65,7 @@ pub fn create_scanner() -> Box<dyn PortScanner> {
 pub fn resolve_process_name(pid: u32) -> Option<String> {
     #[cfg(target_os = "linux")]
     {
-        let comm_path = format!("/proc/{}/comm", pid);
-        std::fs::read_to_string(&comm_path)
+        std::fs::read_to_string(format!("/proc/{}/comm", pid))
             .ok()
             .map(|s| s.trim().to_string())
     }

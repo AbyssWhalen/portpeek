@@ -23,6 +23,7 @@ impl Drop for TerminalGuard {
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 /// Run watch mode: continuously scan and display ports, refreshing at the given interval.
 /// Press 'q' or Ctrl+C to exit.
 pub fn run_watch_mode(
