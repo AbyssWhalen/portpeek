@@ -61,13 +61,56 @@ pub fn create_scanner() -> Box<dyn PortScanner> {
     }
 }
 
-/// Resolve PID to process name using sysinfo crate (cross-platform fallback).
+/// Resolve PID to process name (cross-platform).
 pub fn resolve_process_name(pid: u32) -> Option<String> {
-    use sysinfo::{Pid, System};
+    #[cfg(target_os = "linux")]
+    {
+        let comm_path = format!("/proc/{}/comm", pid);
+        std::fs::read_to_string(&comm_path)
+            .ok()
+            .map(|s| s.trim().to_string())
+    }
 
-    let mut sys = System::new();
-    sys.refresh_processes();
+    #[cfg(target_os = "macos")]
+    {
+        std::process::Command::new("ps")
+            .args(["-p", &pid.to_string(), "-o", "comm="])
+            .output()
+            .ok()
+            .and_then(|o| {
+                let name = String::from_utf8_lossy(&o.stdout).trim().to_string();
+                if name.is_empty() {
+                    None
+                } else {
+                    Some(name)
+                }
+            })
+    }
 
-    let pid = Pid::from(pid);
-    sys.process(pid).map(|p| p.name().to_string())
+    #[cfg(target_os = "windows")]
+    {
+        std::process::Command::new("tasklist")
+            .args([
+                "/FI",
+                &format!("PID eq {}", pid),
+                "/NH",
+                "/FO",
+                "CSV",
+            ])
+            .output()
+            .ok()
+            .and_then(|o| {
+                let line = String::from_utf8_lossy(&o.stdout);
+                line.split(',')
+                    .next()
+                    .map(|s| s.trim_matches('"').trim().to_string())
+                    .filter(|s| !s.is_empty() && s != "INFO:")
+            })
+    }
+
+    #[cfg(not(any(target_os = "linux", target_os = "macos", target_os = "windows")))]
+    {
+        let _ = pid;
+        None
+    }
 }

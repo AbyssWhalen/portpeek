@@ -29,13 +29,9 @@ pub fn kill_on_port(
     }
 
     // Get unique PIDs
-    let pids: Vec<u32> = matching.iter().filter_map(|e| e.pid).collect();
-    let pids: Vec<u32> = {
-        let mut v = pids;
-        v.sort();
-        v.dedup();
-        v
-    };
+    let mut pids: Vec<u32> = matching.iter().filter_map(|e| e.pid).collect();
+    pids.sort();
+    pids.dedup();
 
     for pid in &pids {
         let proc_name = matching
