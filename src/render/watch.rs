@@ -1,7 +1,7 @@
+use crate::apply_filters;
 use crate::render::table::TableRenderer;
 use crate::render::Renderer;
 use crate::scanner::PortScanner;
-use crate::apply_filters;
 use crossterm::{
     cursor,
     event::{self, Event, KeyCode, KeyModifiers},
@@ -14,7 +14,11 @@ use std::time::{Duration, Instant};
 struct TerminalGuard;
 impl Drop for TerminalGuard {
     fn drop(&mut self) {
-        let _ = execute!(std::io::stdout(), cursor::Show, terminal::LeaveAlternateScreen);
+        let _ = execute!(
+            std::io::stdout(),
+            cursor::Show,
+            terminal::LeaveAlternateScreen
+        );
         let _ = terminal::disable_raw_mode();
     }
 }
@@ -40,7 +44,7 @@ pub fn run_watch_mode(
 
     let _guard = TerminalGuard;
 
-    let result = watch_loop(
+    watch_loop(
         &mut stdout,
         scanner,
         &renderer,
@@ -50,11 +54,10 @@ pub fn run_watch_mode(
         process_filter,
         port_filter,
         range_filter,
-    );
-
-    result
+    )
 }
 
+#[allow(clippy::too_many_arguments)]
 fn watch_loop(
     stdout: &mut impl Write,
     scanner: &dyn PortScanner,
@@ -89,16 +92,25 @@ fn watch_loop(
             let entries = match scanner.scan() {
                 Ok(e) => e,
                 Err(e) => {
-                    execute!(stdout, terminal::Clear(ClearType::All), cursor::MoveTo(0, 0))?;
+                    execute!(
+                        stdout,
+                        terminal::Clear(ClearType::All),
+                        cursor::MoveTo(0, 0)
+                    )?;
                     writeln!(stdout, "Scan error: {}", e)?;
                     continue;
                 }
             };
 
             // Apply filters
-            let filtered = apply_filters(entries, show_all, process_filter, port_filter, range_filter);
+            let filtered =
+                apply_filters(entries, show_all, process_filter, port_filter, range_filter);
 
-            execute!(stdout, terminal::Clear(ClearType::All), cursor::MoveTo(0, 0))?;
+            execute!(
+                stdout,
+                terminal::Clear(ClearType::All),
+                cursor::MoveTo(0, 0)
+            )?;
 
             // Header
             let header = format!(
@@ -108,7 +120,7 @@ fn watch_loop(
             if no_color {
                 writeln!(stdout, "{}", header)?;
             } else {
-                writeln!(stdout, "{}", colored::Colorize::bold(&header))?;
+                writeln!(stdout, "{}", colored::Colorize::bold(header.as_str()))?;
             }
 
             // Table

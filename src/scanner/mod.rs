@@ -90,13 +90,7 @@ pub fn resolve_process_name(pid: u32) -> Option<String> {
     #[cfg(target_os = "windows")]
     {
         std::process::Command::new("tasklist")
-            .args([
-                "/FI",
-                &format!("PID eq {}", pid),
-                "/NH",
-                "/FO",
-                "CSV",
-            ])
+            .args(["/FI", &format!("PID eq {}", pid), "/NH", "/FO", "CSV"])
             .output()
             .ok()
             .and_then(|o| {

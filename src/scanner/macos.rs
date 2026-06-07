@@ -159,7 +159,8 @@ mod tests {
 
     #[test]
     fn test_parse_lsof_name_established() {
-        let entry = parse_lsof_name("127.0.0.1:8080->10.0.0.1:54321", 1234, "node".to_string()).unwrap();
+        let entry =
+            parse_lsof_name("127.0.0.1:8080->10.0.0.1:54321", 1234, "node".to_string()).unwrap();
         assert_eq!(entry.port, 8080);
     }
 }

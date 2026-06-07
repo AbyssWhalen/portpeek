@@ -84,7 +84,7 @@ impl ConnectionState {
     /// Parse Windows TCP state (MIB_TCP_STATE constants).
     pub fn from_windows_state(state: u32) -> Self {
         match state {
-            1 => ConnectionState::Unknown,    // CLOSED
+            1 => ConnectionState::Unknown, // CLOSED
             2 => ConnectionState::Listen,
             3 => ConnectionState::SynSent,
             4 => ConnectionState::SynRecv,
@@ -95,7 +95,7 @@ impl ConnectionState {
             9 => ConnectionState::Closing,
             10 => ConnectionState::LastAck,
             11 => ConnectionState::TimeWait,
-            12 => ConnectionState::Unknown,   // DELETE_TCB
+            12 => ConnectionState::Unknown, // DELETE_TCB
             _ => ConnectionState::Unknown,
         }
     }
@@ -104,7 +104,9 @@ impl ConnectionState {
 /// Convert a u32 in network byte order (as stored in /proc/net/tcp) to an IPv4 address.
 pub fn u32_to_ipv4(addr: u32) -> IpAddr {
     let bytes = addr.to_ne_bytes();
-    IpAddr::V4(std::net::Ipv4Addr::new(bytes[3], bytes[2], bytes[1], bytes[0]))
+    IpAddr::V4(std::net::Ipv4Addr::new(
+        bytes[0], bytes[1], bytes[2], bytes[3],
+    ))
 }
 
 /// Parse a hex "address:port" pair from /proc/net/tcp format.
@@ -138,9 +140,8 @@ pub fn parse_linux_addr_port_v6(s: &str) -> Option<(IpAddr, u16)> {
     let port = u16::from_str_radix(parts[1], 16).ok()?;
 
     // /proc/net/tcp6 stores IPv6 in 4 groups of 4 bytes, each group in host byte order
-    let b = |start: usize| -> u32 {
-        u32::from_str_radix(&hex_addr[start..start + 8], 16).unwrap_or(0)
-    };
+    let b =
+        |start: usize| -> u32 { u32::from_str_radix(&hex_addr[start..start + 8], 16).unwrap_or(0) };
 
     let g0 = b(0).to_ne_bytes();
     let g1 = b(8).to_ne_bytes();
@@ -241,10 +242,22 @@ mod tests {
 
     #[test]
     fn test_connection_state_from_linux_hex() {
-        assert_eq!(ConnectionState::from_linux_hex("0A"), ConnectionState::Listen);
-        assert_eq!(ConnectionState::from_linux_hex("01"), ConnectionState::Established);
-        assert_eq!(ConnectionState::from_linux_hex("06"), ConnectionState::TimeWait);
-        assert_eq!(ConnectionState::from_linux_hex("FF"), ConnectionState::Unknown);
+        assert_eq!(
+            ConnectionState::from_linux_hex("0A"),
+            ConnectionState::Listen
+        );
+        assert_eq!(
+            ConnectionState::from_linux_hex("01"),
+            ConnectionState::Established
+        );
+        assert_eq!(
+            ConnectionState::from_linux_hex("06"),
+            ConnectionState::TimeWait
+        );
+        assert_eq!(
+            ConnectionState::from_linux_hex("FF"),
+            ConnectionState::Unknown
+        );
     }
 
     #[test]
@@ -252,7 +265,7 @@ mod tests {
         assert_eq!(well_known_service(80), Some("http"));
         assert_eq!(well_known_service(443), Some("https"));
         assert_eq!(well_known_service(5432), Some("postgresql"));
-        assert_eq!(well_known_service(99999), None);
+        assert_eq!(well_known_service(9999), None);
     }
 
     #[test]

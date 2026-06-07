@@ -85,7 +85,9 @@ fn test_kill_nonexistent_port() {
     let stdout = String::from_utf8_lossy(&output.stdout);
     // Either stdout or stderr should mention no process found
     assert!(
-        stdout.contains("No process found") || stderr.contains("No process found") || output.status.success(),
+        stdout.contains("No process found")
+            || stderr.contains("No process found")
+            || output.status.success(),
         "Should handle nonexistent port gracefully"
     );
 }

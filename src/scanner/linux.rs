@@ -15,21 +15,45 @@ impl PortScanner for LinuxScanner {
         let inode_to_pid = build_inode_pid_map()?;
 
         // Parse TCP connections (IPv4)
-        parse_proc_net_file("/proc/net/tcp", Protocol::TCP, false, &inode_to_pid, &mut entries)?;
+        parse_proc_net_file(
+            "/proc/net/tcp",
+            Protocol::TCP,
+            false,
+            &inode_to_pid,
+            &mut entries,
+        )?;
 
         // Parse TCP connections (IPv6)
         if Path::new("/proc/net/tcp6").exists() {
-            parse_proc_net_file("/proc/net/tcp6", Protocol::TCP, true, &inode_to_pid, &mut entries)?;
+            parse_proc_net_file(
+                "/proc/net/tcp6",
+                Protocol::TCP,
+                true,
+                &inode_to_pid,
+                &mut entries,
+            )?;
         }
 
         // Parse UDP connections (IPv4)
         if Path::new("/proc/net/udp").exists() {
-            parse_proc_net_file("/proc/net/udp", Protocol::UDP, false, &inode_to_pid, &mut entries)?;
+            parse_proc_net_file(
+                "/proc/net/udp",
+                Protocol::UDP,
+                false,
+                &inode_to_pid,
+                &mut entries,
+            )?;
         }
 
         // Parse UDP connections (IPv6)
         if Path::new("/proc/net/udp6").exists() {
-            parse_proc_net_file("/proc/net/udp6", Protocol::UDP, true, &inode_to_pid, &mut entries)?;
+            parse_proc_net_file(
+                "/proc/net/udp6",
+                Protocol::UDP,
+                true,
+                &inode_to_pid,
+                &mut entries,
+            )?;
         }
 
         // Resolve process names for entries with PIDs

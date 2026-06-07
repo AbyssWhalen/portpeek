@@ -71,7 +71,10 @@ impl Cli {
     pub fn parse_range(range: &str) -> Result<(u16, u16), String> {
         let parts: Vec<&str> = range.split('-').collect();
         if parts.len() != 2 {
-            return Err(format!("Invalid range format: '{}'. Use START-END (e.g. 3000-4000)", range));
+            return Err(format!(
+                "Invalid range format: '{}'. Use START-END (e.g. 3000-4000)",
+                range
+            ));
         }
         let start: u16 = parts[0]
             .parse()
@@ -80,7 +83,10 @@ impl Cli {
             .parse()
             .map_err(|_| format!("Invalid end port: '{}'", parts[1]))?;
         if start > end {
-            return Err(format!("Start port {} is greater than end port {}", start, end));
+            return Err(format!(
+                "Start port {} is greater than end port {}",
+                start, end
+            ));
         }
         Ok((start, end))
     }

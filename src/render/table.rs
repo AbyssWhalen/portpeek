@@ -58,10 +58,7 @@ impl Renderer for TableRenderer {
                 .map(|p| p.to_string())
                 .unwrap_or_else(|| "-".to_string());
 
-            let process_str = entry
-                .process_name
-                .as_deref()
-                .unwrap_or("-");
+            let process_str = entry.process_name.as_deref().unwrap_or("-");
 
             let state_color = match entry.state {
                 crate::model::ConnectionState::Listen => Color::Green,
@@ -71,8 +68,7 @@ impl Renderer for TableRenderer {
             };
 
             let state_cell = if no_color {
-                Cell::new(entry.state.to_string())
-                    .set_alignment(CellAlignment::Center)
+                Cell::new(entry.state.to_string()).set_alignment(CellAlignment::Center)
             } else {
                 Cell::new(entry.state.to_string())
                     .set_alignment(CellAlignment::Center)
@@ -93,9 +89,7 @@ impl Renderer for TableRenderer {
 
         // Footer
         if warning_count > 0 {
-            let warning_line = format!(
-                "\n ⚠ = bound to all interfaces (internet-accessible)"
-            );
+            let warning_line = "\n ⚠ = bound to all interfaces (internet-accessible)".to_string();
             output.push_str(&if no_color {
                 warning_line
             } else {
@@ -109,7 +103,12 @@ impl Renderer for TableRenderer {
             if entries.len() == 1 { "" } else { "s" }
         );
         let summary = if warning_count > 0 {
-            format!("{} · {} warning{}", summary, warning_count, if warning_count == 1 { "" } else { "s" })
+            format!(
+                "{} · {} warning{}",
+                summary,
+                warning_count,
+                if warning_count == 1 { "" } else { "s" }
+            )
         } else {
             summary
         };

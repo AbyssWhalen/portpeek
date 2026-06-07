@@ -44,20 +44,21 @@ impl PortScanner for WindowsScanner {
 // ---------------------------------------------------------------------------
 
 fn scan_tcp_v4(entries: &mut Vec<PortEntry>) -> Result<(), ScanError> {
+    use windows::Win32::Foundation::WIN32_ERROR;
     use windows::Win32::NetworkManagement::IpHelper::{
-        GetExtendedTcpTable, MIB_TCPROW_OWNER_PID, MIB_TCPTABLE_OWNER_PID, TCP_TABLE_OWNER_PID_ALL,
+        GetExtendedTcpTable, MIB_TCPTABLE_OWNER_PID, TCP_TABLE_OWNER_PID_ALL,
     };
     use windows::Win32::Networking::WinSock::AF_INET;
 
     let buffer = call_get_extended_table(|buf, size| unsafe {
-        GetExtendedTcpTable(
-            buf.cast(),
+        WIN32_ERROR(GetExtendedTcpTable(
+            Some(buf.cast()),
             size,
             false,
             AF_INET.0 as u32,
             TCP_TABLE_OWNER_PID_ALL,
             0,
-        )
+        ))
     })?;
 
     let table_ptr = buffer.as_ptr() as *const MIB_TCPTABLE_OWNER_PID;
@@ -69,9 +70,12 @@ fn scan_tcp_v4(entries: &mut Vec<PortEntry>) -> Result<(), ScanError> {
         let port = u16::from_be((row.dwLocalPort & 0xFFFF) as u16);
         let ip_bytes = row.dwLocalAddr.to_ne_bytes();
         let bind_addr = IpAddr::V4(std::net::Ipv4Addr::new(
-            ip_bytes[3], ip_bytes[2], ip_bytes[1], ip_bytes[0],
+            ip_bytes[0],
+            ip_bytes[1],
+            ip_bytes[2],
+            ip_bytes[3],
         ));
-        let state = ConnectionState::from_windows_state(row.dwState.0 as u32);
+        let state = ConnectionState::from_windows_state(row.dwState);
 
         entries.push(PortEntry {
             port,
@@ -92,20 +96,21 @@ fn scan_tcp_v4(entries: &mut Vec<PortEntry>) -> Result<(), ScanError> {
 // ---------------------------------------------------------------------------
 
 fn scan_tcp_v6(entries: &mut Vec<PortEntry>) -> Result<(), ScanError> {
+    use windows::Win32::Foundation::WIN32_ERROR;
     use windows::Win32::NetworkManagement::IpHelper::{
-        GetExtendedTcpTable, MIB_TCP6ROW_OWNER_PID, MIB_TCP6TABLE_OWNER_PID, TCP_TABLE_OWNER_PID_ALL,
+        GetExtendedTcpTable, MIB_TCP6TABLE_OWNER_PID, TCP_TABLE_OWNER_PID_ALL,
     };
     use windows::Win32::Networking::WinSock::AF_INET6;
 
     let buffer = call_get_extended_table(|buf, size| unsafe {
-        GetExtendedTcpTable(
-            buf.cast(),
+        WIN32_ERROR(GetExtendedTcpTable(
+            Some(buf.cast()),
             size,
             false,
             AF_INET6.0 as u32,
             TCP_TABLE_OWNER_PID_ALL,
             0,
-        )
+        ))
     })?;
 
     let table_ptr = buffer.as_ptr() as *const MIB_TCP6TABLE_OWNER_PID;
@@ -116,7 +121,7 @@ fn scan_tcp_v6(entries: &mut Vec<PortEntry>) -> Result<(), ScanError> {
     for row in rows {
         let port = u16::from_be((row.dwLocalPort & 0xFFFF) as u16);
         let bind_addr = IpAddr::V6(std::net::Ipv6Addr::from(row.ucLocalAddr));
-        let state = ConnectionState::from_windows_state(row.dwState.0 as u32);
+        let state = ConnectionState::from_windows_state(row.dwState);
 
         entries.push(PortEntry {
             port,
@@ -137,20 +142,21 @@ fn scan_tcp_v6(entries: &mut Vec<PortEntry>) -> Result<(), ScanError> {
 // ---------------------------------------------------------------------------
 
 fn scan_udp_v4(entries: &mut Vec<PortEntry>) -> Result<(), ScanError> {
+    use windows::Win32::Foundation::WIN32_ERROR;
     use windows::Win32::NetworkManagement::IpHelper::{
-        GetExtendedUdpTable, MIB_UDPROW_OWNER_PID, MIB_UDPTABLE_OWNER_PID, UDP_TABLE_OWNER_PID,
+        GetExtendedUdpTable, MIB_UDPTABLE_OWNER_PID, UDP_TABLE_OWNER_PID,
     };
     use windows::Win32::Networking::WinSock::AF_INET;
 
     let buffer = call_get_extended_table(|buf, size| unsafe {
-        GetExtendedUdpTable(
-            buf.cast(),
+        WIN32_ERROR(GetExtendedUdpTable(
+            Some(buf.cast()),
             size,
             false,
             AF_INET.0 as u32,
             UDP_TABLE_OWNER_PID,
             0,
-        )
+        ))
     })?;
 
     let table_ptr = buffer.as_ptr() as *const MIB_UDPTABLE_OWNER_PID;
@@ -162,7 +168,10 @@ fn scan_udp_v4(entries: &mut Vec<PortEntry>) -> Result<(), ScanError> {
         let port = u16::from_be((row.dwLocalPort & 0xFFFF) as u16);
         let ip_bytes = row.dwLocalAddr.to_ne_bytes();
         let bind_addr = IpAddr::V4(std::net::Ipv4Addr::new(
-            ip_bytes[3], ip_bytes[2], ip_bytes[1], ip_bytes[0],
+            ip_bytes[0],
+            ip_bytes[1],
+            ip_bytes[2],
+            ip_bytes[3],
         ));
 
         entries.push(PortEntry {
@@ -184,20 +193,21 @@ fn scan_udp_v4(entries: &mut Vec<PortEntry>) -> Result<(), ScanError> {
 // ---------------------------------------------------------------------------
 
 fn scan_udp_v6(entries: &mut Vec<PortEntry>) -> Result<(), ScanError> {
+    use windows::Win32::Foundation::WIN32_ERROR;
     use windows::Win32::NetworkManagement::IpHelper::{
-        GetExtendedUdpTable, MIB_UDP6ROW_OWNER_PID, MIB_UDP6TABLE_OWNER_PID, UDP_TABLE_OWNER_PID,
+        GetExtendedUdpTable, MIB_UDP6TABLE_OWNER_PID, UDP_TABLE_OWNER_PID,
     };
     use windows::Win32::Networking::WinSock::AF_INET6;
 
     let buffer = call_get_extended_table(|buf, size| unsafe {
-        GetExtendedUdpTable(
-            buf.cast(),
+        WIN32_ERROR(GetExtendedUdpTable(
+            Some(buf.cast()),
             size,
             false,
             AF_INET6.0 as u32,
             UDP_TABLE_OWNER_PID,
             0,
-        )
+        ))
     })?;
 
     let table_ptr = buffer.as_ptr() as *const MIB_UDP6TABLE_OWNER_PID;

@@ -42,10 +42,7 @@ pub fn kill_on_port(
 
         if !force {
             if no_color {
-                print!(
-                    "Kill {} (PID {}) on port {}? [y/N] ",
-                    proc_name, pid, port
-                );
+                print!("Kill {} (PID {}) on port {}? [y/N] ", proc_name, pid, port);
             } else {
                 print!(
                     "Kill {} (PID {}) on port {}? [y/N] ",
@@ -68,12 +65,7 @@ pub fn kill_on_port(
         if no_color {
             println!("✓ Killed {} (PID {})", proc_name, pid);
         } else {
-            println!(
-                "{} Killed {} (PID {})",
-                "✓".green(),
-                proc_name,
-                pid
-            );
+            println!("{} Killed {} (PID {})", "✓".green(), proc_name, pid);
         }
     }
 
@@ -94,16 +86,12 @@ pub fn open_port(port: u16) -> Result<(), Box<dyn std::error::Error>> {
 
     #[cfg(target_os = "macos")]
     {
-        std::process::Command::new("open")
-            .arg(&url)
-            .spawn()?;
+        std::process::Command::new("open").arg(&url).spawn()?;
     }
 
     #[cfg(target_os = "linux")]
     {
-        std::process::Command::new("xdg-open")
-            .arg(&url)
-            .spawn()?;
+        std::process::Command::new("xdg-open").arg(&url).spawn()?;
     }
 
     Ok(())

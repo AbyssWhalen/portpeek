@@ -1,5 +1,5 @@
-/// Unit tests for scanner logic.
-/// These tests verify parsing and filtering without requiring actual port scanning.
+//! Unit tests for scanner logic.
+//! These tests verify parsing and filtering without requiring actual port scanning.
 
 #[cfg(test)]
 mod model_tests {
@@ -84,10 +84,22 @@ mod model_tests {
 
     #[test]
     fn test_connection_state_windows_mapping() {
-        assert_eq!(ConnectionState::from_windows_state(2), ConnectionState::Listen);
-        assert_eq!(ConnectionState::from_windows_state(5), ConnectionState::Established);
-        assert_eq!(ConnectionState::from_windows_state(11), ConnectionState::TimeWait);
-        assert_eq!(ConnectionState::from_windows_state(99), ConnectionState::Unknown);
+        assert_eq!(
+            ConnectionState::from_windows_state(2),
+            ConnectionState::Listen
+        );
+        assert_eq!(
+            ConnectionState::from_windows_state(5),
+            ConnectionState::Established
+        );
+        assert_eq!(
+            ConnectionState::from_windows_state(11),
+            ConnectionState::TimeWait
+        );
+        assert_eq!(
+            ConnectionState::from_windows_state(99),
+            ConnectionState::Unknown
+        );
     }
 }
 
@@ -110,7 +122,7 @@ mod filter_tests {
 
     #[test]
     fn test_filter_by_state() {
-        let entries = vec![
+        let entries = [
             make_entry(80, ConnectionState::Listen, Some("nginx")),
             make_entry(8080, ConnectionState::Established, Some("curl")),
             make_entry(443, ConnectionState::TimeWait, Some("nginx")),
@@ -127,7 +139,7 @@ mod filter_tests {
 
     #[test]
     fn test_filter_by_process_name() {
-        let entries = vec![
+        let entries = [
             make_entry(80, ConnectionState::Listen, Some("nginx")),
             make_entry(3000, ConnectionState::Listen, Some("node")),
             make_entry(5432, ConnectionState::Listen, Some("postgres")),
@@ -149,7 +161,7 @@ mod filter_tests {
 
     #[test]
     fn test_filter_by_port() {
-        let entries = vec![
+        let entries = [
             make_entry(80, ConnectionState::Listen, Some("nginx")),
             make_entry(443, ConnectionState::Listen, Some("nginx")),
             make_entry(8080, ConnectionState::Listen, Some("node")),
@@ -161,7 +173,7 @@ mod filter_tests {
 
     #[test]
     fn test_filter_by_range() {
-        let entries = vec![
+        let entries = [
             make_entry(80, ConnectionState::Listen, Some("nginx")),
             make_entry(3000, ConnectionState::Listen, Some("node")),
             make_entry(3001, ConnectionState::Listen, Some("node")),

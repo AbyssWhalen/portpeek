@@ -5,7 +5,6 @@ use portpeek::process;
 use portpeek::render::json::JsonRenderer;
 use portpeek::render::table::TableRenderer;
 use portpeek::render::Renderer;
-use portpeek::scanner::PortScanner;
 
 fn main() {
     let cli = Cli::parse();
@@ -17,7 +16,8 @@ fn main() {
                 let scanner = portpeek::scanner::create_scanner();
                 match scanner.scan() {
                     Ok(entries) => {
-                        if let Err(e) = process::kill_on_port(*port, *force, &entries, cli.no_color) {
+                        if let Err(e) = process::kill_on_port(*port, *force, &entries, cli.no_color)
+                        {
                             eprintln!("Error: {}", e);
                             std::process::exit(1);
                         }
