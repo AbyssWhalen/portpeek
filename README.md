@@ -3,7 +3,6 @@
 > Fast, colorful port inspector. Know who's using your ports in milliseconds.
 
 [![CI](https://github.com/AbyssWhalen/portpeek/actions/workflows/ci.yml/badge.svg)](https://github.com/AbyssWhalen/portpeek/actions/workflows/ci.yml)
-[![Crates.io](https://img.shields.io/crates/v/portpeek)](https://crates.io/crates/portpeek)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A modern replacement for `lsof -i` / `netstat` / `ss` that gives you a clean, colored overview of which ports are in use on your machine -- and which processes own them.
@@ -24,8 +23,8 @@ A modern replacement for `lsof -i` / `netstat` / `ss` that gives you a clean, co
 ## Quick Start
 
 ```bash
-# Install
-cargo install portpeek
+# Install: grab a prebuilt binary from the Releases page,
+# or build from source -- see Installation below
 
 # See what's listening on your machine
 portpeek
@@ -54,25 +53,23 @@ portpeek kill 8080
 
 ## Installation
 
-### From crates.io (recommended)
-
-```bash
-cargo install portpeek
-```
-
-Requires Rust 1.74 or later.
-
-### From pre-built binaries
+### From pre-built binaries (recommended)
 
 Download the binary for your platform from the [releases page](https://github.com/AbyssWhalen/portpeek/releases). Available for Linux (x86_64), macOS (x86_64 + Apple Silicon), and Windows (x86_64).
 
 ### From source
+
+Requires Rust 1.74 or later.
 
 ```bash
 git clone https://github.com/AbyssWhalen/portpeek.git
 cd portpeek
 cargo install --path .
 ```
+
+### From crates.io (planned)
+
+Not published to crates.io yet. Once it is, installation will be as simple as `cargo install portpeek`.
 
 ### Verify installation
 
